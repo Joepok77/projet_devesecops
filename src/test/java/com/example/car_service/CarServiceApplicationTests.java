@@ -13,6 +13,7 @@ class CarServiceApplicationTests {
 		Car car = new Car("AA11BB", "Ferrari",995);
 		String plateNumber = car.getPlateNumber();
 		assertEquals(plateNumber, "AA11BB");
+
 	}
 
 }
