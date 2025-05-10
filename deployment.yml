@@ -2,23 +2,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: dev
+    app: car-service
     version: "1.0"
-  name: dev
+  name: car-service
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: dev
+      app: car-service
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: dev
+        app: car-service
     spec:
       containers:
-        - name: dev
+        - name: carservice
           image: 26ka/car_service:1
           imagePullPolicy: Always
           ports:
@@ -32,18 +32,50 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
-  labels:
-    app: dev
-  name: dev
+  name: car-service
 spec:
   ports:
     - port: 80
+      targetPort: 8080
       protocol: TCP
-      targetPort: 8181
-      name: http
   selector:
-    app: dev
+    app: car-service
   type: LoadBalancer
-status:
-  loadBalancer: {}
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: microservice-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: car-service
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - microservice-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: car-service.default.svc.cluster.local
+            port:
+              number: 80

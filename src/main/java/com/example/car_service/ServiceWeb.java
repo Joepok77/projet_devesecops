@@ -2,9 +2,11 @@ package com.example.car_service ;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class ServiceWeb {
@@ -19,8 +21,6 @@ public class ServiceWeb {
         car = new Car("CC33DD", "peugeot", 500);
         cars.add(car);
     }
-
-
 
 
     @GetMapping("/cars/{plateNumber}")
